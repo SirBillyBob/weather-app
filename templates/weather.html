@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} Weather</title>
-    <link href="{{ url_for('static',filename='styles/style.css')}}" rel="stylesheet" />
+    <title>{{ title }}</title>
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
 </head>
 <body>
-    <h1>{{ title }} Weather</h1>
-    <p>{{ status }} and {{ temp }} &deg;</p>
-    <p>Feels like {{ feels_like }} &deg;</p>
+    <h1>{{ title }}</h1>
+    <ul>
+        {% for day in forecast %}
+            <li>
+                <strong>{{ day.date }}</strong>: {{ day.description }} with an average temperature of {{ day.avg_temp }} &deg;F
+            </li>
+        {% endfor %}
+    </ul>
     <form action="/weather">
-        <input type="text" name = "city" id="city" placeholder="Enter a City"/>
+        <input type="text" name="city" id="city" placeholder="Enter a City" />
+        <input type="text" name="state" id="state" placeholder="Enter a State (Optional)" />
         <button type="submit">Submit</button>
     </form>
+    <form action="/">
+        <button type="submit">Back to Home</button>
+    </form>
 </body>
+<div id="footer">
+    Created by Aaron HuSun
+</div>
 </html>

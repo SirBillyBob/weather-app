@@ -4,13 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
-    <link href="{{ url_for('static',filename='styles/style.css')}}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
-    <h1>Get Weather Conditions</h1>
+    <h1>Weather App</h1>
+    <h2>5 Day Forecast</h2>
     <form action="/weather">
-        <input type="text" name = "city" id="city" placeholder="Enter a City"/>
+        <input type="text" name="city" id="city" placeholder="Enter a City" />
+        <input type="text" name="state" id="state" placeholder="Enter a State (optional)" />
         <button type="submit">Submit</button>
     </form>
+    <h2>Current Conditions</h2>
+    <div id="map" style="height: 400px; width: 80%;"></div>
+    <h2>Recent Searches</h2>
+    <ul>
+        {% for search in recent_searches %}
+            <li><a href="/weather?city={{ search }}">{{ search }}</a></li>
+        {% endfor %}
+    </ul>
+    <form action="/reset" method="post">
+        <button type="submit">Clear Recent Searches</button>
+    </form>
+    <script>
+        var map = L.map('map').setView([38.0406, -84.5037], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function onMapClick(e) {
+            fetch(`/get_weather_by_coords?lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Weather at ${data.name}: ${data.weather[0].description}, Temp: ${data.main.temp}°F`);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        map.on('click', onMapClick);
+    </script>
 </body>
+<div id="footer">
+    Created by Aaron HuSun
+</div>
 </html>
